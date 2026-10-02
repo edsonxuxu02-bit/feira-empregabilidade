@@ -3,13 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checklist - 2ª Feira de Empregabilidade</title>
+    <title>2ª Feira de Empregabilidade - Grau Técnico</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        grau: {
+                            navy: '#002B49',
+                            navydark: '#001E34',
+                            green: '#00A859',
+                            greenlight: '#E6F6EC',
+                            greenhover: '#008F4C',
+                            accent: '#28A745'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .checkbox-custom:checked + div {
+        .checkbox-custom:checked + label .item-text {
             text-decoration: line-through;
             color: #9CA3AF;
         }
@@ -18,87 +40,148 @@
             height: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #F3F4F6;
+            background: #F1F5F9;
             border-radius: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #D1D5DB;
+            background: #CBD5E1;
             border-radius: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #9CA3AF;
+            background: #94A3B8;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-16">
 
-    <header class="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white shadow-lg">
-        <div class="max-w-6xl mx-auto px-4 py-8">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <span class="inline-block px-3 py-1 bg-blue-800 bg-opacity-50 text-blue-100 text-xs font-semibold rounded-full uppercase tracking-wider mb-2">
-                        1ª Reunião de Alinhamento
+    <header class="bg-gradient-to-r from-grau-navydark via-grau-navy to-slate-900 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-grau-green opacity-10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 py-6 md:py-8">
+            <!-- Top bar / Brand & Room share -->
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white px-3.5 py-1.5 rounded-xl shadow-md flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-grau-green inline-block animate-pulse"></span>
+                        <span class="font-black text-grau-navy tracking-tight text-base md:text-lg">GRAU TÉCNICO</span>
+                    </div>
+                    <span id="sync-status-badge" class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold rounded-full flex items-center gap-1.5">
+                        <i class="fas fa-spinner fa-spin text-[10px]"></i> <span id="sync-status-text">Conectando Nuvem...</span>
                     </span>
-                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">2ª Feira de Empregabilidade</h1>
-                    <p class="mt-2 text-blue-100 flex items-center gap-2 text-sm md:text-base">
-                        <span><i class="far fa-calendar-alt"></i> 27/10/2026</span>
-                        <span class="mx-1">•</span>
-                        <span><i class="far fa-clock"></i> 13h às 17h</span>
+                </div>
+
+                <!-- Live Room Share Button -->
+                <div class="flex items-center gap-2 bg-white/10 backdrop-blur-md p-1.5 rounded-xl border border-white/10">
+                    <div class="px-3 py-1 text-xs text-slate-300">
+                        Sala Sincronizada: <span id="current-room-id" class="font-mono font-bold text-white">geral</span>
+                    </div>
+                    <button onclick="copyShareLink()" class="px-3.5 py-1.5 bg-grau-green hover:bg-grau-greenhover text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+                        <i class="fas fa-share-alt"></i> Copiar Link Equipe
+                    </button>
+                </div>
+            </div>
+
+            <!-- Header Title & Overall Stats -->
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 text-grau-greenlight text-xs font-semibold rounded-full uppercase tracking-wider mb-2 border border-white/10">
+                        <i class="far fa-calendar-check text-grau-green"></i> 1ª Reunião de Alinhamento
+                    </div>
+                    <h1 class="text-2xl md:text-4xl font-extrabold tracking-tight">2ª Feira de Empregabilidade</h1>
+                    <p class="mt-2 text-slate-300 flex items-center gap-3 text-sm">
+                        <span><i class="far fa-calendar-alt text-grau-green"></i> 27/10/2026</span>
+                        <span>•</span>
+                        <span><i class="far fa-clock text-grau-green"></i> 13h às 17h</span>
                     </p>
                 </div>
                 
-                <!-- Card de Progresso Geral -->
-                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 w-full md:w-80 shadow-inner">
+                <!-- Overall Progress Card -->
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 w-full lg:w-80 shadow-lg">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs font-medium uppercase tracking-wider text-blue-100">Progresso Geral</span>
-                        <span id="progress-percentage" class="text-lg font-bold">0%</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-200">Progresso do Evento</span>
+                        <span id="progress-percentage" class="text-xl font-extrabold text-grau-green">0%</span>
                     </div>
-                    <div class="w-full bg-blue-950/40 rounded-full h-3 overflow-hidden p-0.5">
-                        <div id="progress-bar" class="bg-gradient-to-r from-emerald-400 to-teal-300 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    <div class="w-full bg-slate-900/60 rounded-full h-3 overflow-hidden p-0.5 border border-white/10">
+                        <div id="progress-bar" class="bg-gradient-to-r from-grau-green to-emerald-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
                     </div>
-                    <div class="mt-2 text-right text-xs text-blue-100/80">
-                        <span id="completed-count">0</span> de <span id="total-count">0</span> tarefas concluídas
+                    <div class="mt-2.5 flex justify-between items-center text-xs text-slate-300">
+                        <span><b id="completed-count">0</b> de <b id="total-count">0</b> itens concluídos</span>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 mt-8">
-        <!-- Ações e Filtros -->
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-            <div class="flex items-center gap-2">
-                <button onclick="expandAll()" class="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1.5">
-                    <i class="fas fa-angle-double-down"></i> Expandir Todos
-                </button>
-                <button onclick="collapseAll()" class="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1.5">
-                    <i class="fas fa-angle-double-up"></i> Recolher Todos
-                </button>
-            </div>
-            
-            <div class="flex items-center gap-2 ml-auto">
-                <button onclick="openAddItemModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center gap-2">
-                    <i class="fas fa-plus"></i> Adicionar Item
-                </button>
-                <button onclick="resetAll()" class="px-3 py-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg text-sm transition-colors" title="Redefinir checklist">
-                    <i class="fas fa-undo-alt"></i>
-                </button>
-            </div>
-        </div>
-
-        <div id="checklist-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Categorias serão inseridas dinamicamente via JS -->
-        </div>
-
-        <section class="mt-10 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-6 bg-slate-900 text-white flex justify-between items-center flex-wrap gap-4">
-                <div>
-                    <h2 class="text-xl font-bold flex items-center gap-2">
-                        <i class="fas fa-clipboard-list text-amber-400"></i> Anotações / Decisões
-                    </h2>
-                    <p class="text-slate-400 text-xs mt-1">Registre decisões tomadas durante as reuniões e defina prazos e responsáveis.</p>
+    <main class="max-w-7xl mx-auto px-4 mt-8">
+        
+        <!-- Filter & Actions Controls -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-8 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                
+                <!-- Filter by Responsible -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-xs font-bold uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                        <i class="fas fa-filter text-grau-navy"></i> Filtrar Por Responsável:
+                    </span>
+                    <div class="flex flex-wrap gap-1.5" id="responsible-filter-buttons">
+                        <button onclick="setResponsibleFilter('ALL')" id="filter-resp-ALL" class="resp-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-grau-navy text-white shadow-sm">
+                            Todos
+                        </button>
+                        <button onclick="setResponsibleFilter('Ed')" id="filter-resp-Ed" class="resp-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            👤 Ed
+                        </button>
+                        <button onclick="setResponsibleFilter('Bruna')" id="filter-resp-Bruna" class="resp-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            👤 Bruna
+                        </button>
+                        <button onclick="setResponsibleFilter('Carlos')" id="filter-resp-Carlos" class="resp-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            👤 Carlos
+                        </button>
+                        <button onclick="setResponsibleFilter('Outro')" id="filter-resp-Outro" class="resp-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            👥 Outro
+                        </button>
+                        <button onclick="setResponsibleFilter('UNASSIGNED')" id="filter-resp-UNASSIGNED" class="resp-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            ⚠️ Não atribuído
+                        </button>
+                    </div>
                 </div>
-                <button onclick="openAddNoteModal()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-lg text-xs transition-colors flex items-center gap-1.5">
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 ml-auto">
+                    <button onclick="openAddItemModal()" class="px-4 py-2 bg-grau-green hover:bg-grau-greenhover text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1.5">
+                        <i class="fas fa-plus-circle"></i> Adicionar Item
+                    </button>
+                    <button onclick="expandAll()" class="p-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-medium transition-colors" title="Expandir Todos">
+                        <i class="fas fa-angles-down"></i>
+                    </button>
+                    <button onclick="collapseAll()" class="p-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-medium transition-colors" title="Recolher Todos">
+                        <i class="fas fa-angles-up"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status Tabs -->
+            <div class="flex items-center gap-4 pt-3 border-t border-slate-100 text-xs font-semibold">
+                <span class="text-slate-400 uppercase tracking-wider">Status:</span>
+                <button onclick="setStatusFilter('ALL')" id="status-filter-ALL" class="text-grau-navy font-bold underline decoration-2 underline-offset-4">Todos</button>
+                <button onclick="setStatusFilter('PENDING')" id="status-filter-PENDING" class="text-slate-500 hover:text-slate-800">Pendentes</button>
+                <button onclick="setStatusFilter('COMPLETED')" id="status-filter-COMPLETED" class="text-slate-500 hover:text-slate-800">Concluídos</button>
+            </div>
+        </div>
+
+        <!-- Dynamic Category Cards Container -->
+        <div id="checklist-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Rendered by JS -->
+        </div>
+
+        <section class="mt-12 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 bg-grau-navy text-white flex justify-between items-center flex-wrap gap-4">
+                <div>
+                    <h2 class="text-lg md:text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-clipboard-list text-grau-green"></i> Anotações & Decisões da Reunião
+                    </h2>
+                    <p class="text-slate-300 text-xs mt-1">Registros de alinhamento atualizados ao vivo para toda a equipe.</p>
+                </div>
+                <button onclick="openAddNoteModal()" class="px-4 py-2 bg-grau-green hover:bg-grau-greenhover text-white font-bold rounded-xl text-xs transition-all shadow-md flex items-center gap-1.5">
                     <i class="fas fa-plus"></i> Nova Anotação
                 </button>
             </div>
@@ -106,291 +189,415 @@
             <div class="overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
-                            <th class="py-3 px-4 w-1/3">Ponto / Tópico</th>
+                        <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                            <th class="py-3 px-4 w-1/3">Ponto / Assunto</th>
                             <th class="py-3 px-4 w-1/3">Decisão / Observação</th>
                             <th class="py-3 px-4 w-1/4">Responsável / Prazo</th>
                             <th class="py-3 px-4 text-center w-16">Ações</th>
                         </tr>
                     </thead>
                     <tbody id="notes-table-body" class="divide-y divide-slate-100 text-sm text-slate-700">
-                        <!-- Anotações dinâmicas serão inseridas aqui -->
+                        <!-- Dynamic notes rendered here -->
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
 
-    <!-- Modal Novo Item -->
-    <div id="modal-add-item" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100">
-            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <i class="fas fa-tasks text-indigo-600"></i> Novo Item de Checklist
+    <!-- Modal Add Item -->
+    <div id="modal-add-item" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <h3 class="text-lg font-bold text-grau-navy mb-4 flex items-center gap-2">
+                <i class="fas fa-tasks text-grau-green"></i> Novo Item no Checklist
             </h3>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Categoria</label>
-                    <select id="modal-category-select" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <!-- Categorias preenchidas dinamicamente -->
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Categoria</label>
+                    <select id="modal-category-select" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-grau-green focus:outline-none bg-slate-50">
+                        <!-- Populated dynamically -->
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Descrição da Tarefa</label>
-                    <input type="text" id="modal-item-title" placeholder="Ex: Confirmar suporte de som" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Descrição do Item</label>
+                    <input type="text" id="modal-item-title" placeholder="Ex: Confirmar som e microfones" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-grau-green focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Atribuir Responsável</label>
+                    <select id="modal-item-resp" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-grau-green focus:outline-none bg-slate-50">
+                        <option value="">Não atribuído</option>
+                        <option value="Ed">Ed</option>
+                        <option value="Bruna">Bruna</option>
+                        <option value="Carlos">Carlos</option>
+                        <option value="Outro">Outro</option>
+                    </select>
                 </div>
             </div>
             <div class="flex justify-end gap-2 mt-6">
-                <button onclick="closeModal('modal-add-item')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
-                <button onclick="saveNewItem()" class="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">Adicionar</button>
+                <button onclick="closeModal('modal-add-item')" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl">Cancelar</button>
+                <button onclick="saveNewItem()" class="px-5 py-2 text-xs font-bold bg-grau-green hover:bg-grau-greenhover text-white rounded-xl shadow-md">Salvar Item</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Nova Anotação -->
-    <div id="modal-add-note" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100">
-            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <i class="fas fa-sticky-note text-amber-500"></i> Nova Anotação / Decisão
+    <!-- Modal Add Note -->
+    <div id="modal-add-note" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <h3 class="text-lg font-bold text-grau-navy mb-4 flex items-center gap-2">
+                <i class="fas fa-sticky-note text-grau-green"></i> Nova Anotação / Decisão
             </h3>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Ponto / Assunto</label>
-                    <input type="text" id="modal-note-point" placeholder="Ex: Credenciamento" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Ponto / Assunto</label>
+                    <input type="text" id="modal-note-point" placeholder="Ex: Credenciamento dos alunos" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-grau-green focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Decisão / Observação</label>
-                    <textarea id="modal-note-decision" rows="3" placeholder="Ex: Utilizar leitores de QR code na entrada principal" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Decisão / Observação</label>
+                    <textarea id="modal-note-decision" rows="3" placeholder="Ex: Utilizar leitores de QR Code na entrada" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-grau-green focus:outline-none"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Responsável / Prazo</label>
-                    <input type="text" id="modal-note-responsible" placeholder="Ex: Maria / Até 15/10" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Responsável / Prazo</label>
+                    <input type="text" id="modal-note-responsible" placeholder="Ex: Bruna - Até 15/10" class="w-full p-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-grau-green focus:outline-none">
                 </div>
             </div>
             <div class="flex justify-end gap-2 mt-6">
-                <button onclick="closeModal('modal-add-note')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
-                <button onclick="saveNewNote()" class="px-4 py-2 text-sm bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-lg">Salvar Anotação</button>
+                <button onclick="closeModal('modal-add-note')" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl">Cancelar</button>
+                <button onclick="saveNewNote()" class="px-5 py-2 text-xs font-bold bg-grau-navy hover:bg-grau-navydark text-white rounded-xl shadow-md">Salvar Anotação</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Dados Iniciais Base do Documento
-        const initialData = [
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-grau-navy text-white px-4 py-3 rounded-xl shadow-2xl border border-white/10 hidden items-center gap-3 z-50 text-xs font-medium">
+        <i class="fas fa-check-circle text-grau-green text-base"></i>
+        <span id="toast-message">Notificação</span>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Application Identification & Public Config
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'feira-empregabilidade-gt';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "AIzaSyDummyKeyForFallback",
+                authDomain: "demo-app.firebaseapp.com",
+                projectId: "demo-app",
+                storageBucket: "demo-app.appspot.com",
+                messagingSenderId: "123456789",
+                appId: "1:123456789:web:123456"
+            };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Get Room ID from Hash URL or Default
+        function getRoomId() {
+            const hash = window.location.hash.replace('#', '').trim();
+            return hash || 'geral';
+        }
+
+        const currentRoomId = getRoomId();
+        document.getElementById('current-room-id').innerText = currentRoomId;
+
+        // Default Grau Técnico Dataset
+        const initialCategories = [
             {
                 id: "cat_1",
-                title: "Evento e Estrutura",
+                title: "📅 Evento e Estrutura",
                 icon: "fa-calendar-alt",
                 items: [
-                    { id: "i_1_1", text: "Confirmar local e espaços utilizados", completed: false },
-                    { id: "i_1_2", text: "Quantidade máxima de empresas", completed: false }
+                    { id: "i_1_1", text: "Confirmar local e espaços utilizados", completed: false, responsible: "Ed" },
+                    { id: "i_1_2", text: "Quantidade máxima de empresas", completed: false, responsible: "Bruna" }
                 ]
             },
             {
                 id: "cat_2",
-                title: "Empresas",
+                title: "🏢 Empresas",
                 icon: "fa-building",
                 items: [
-                    { id: "i_2_1", text: "Empresas já convidadas", completed: false },
-                    { id: "i_2_2", text: "Empresas confirmadas", completed: false },
-                    { id: "i_2_3", text: "Empresas aguardando retorno", completed: false },
-                    { id: "i_2_4", text: "Distribuição das salas", completed: false },
-                    { id: "i_2_5", text: "Quantidade de representantes por empresa", completed: false },
-                    { id: "i_2_6", text: "Orientações pré-evento para as empresas", completed: false }
+                    { id: "i_2_1", text: "Empresas já convidadas", completed: false, responsible: "Carlos" },
+                    { id: "i_2_2", text: "Empresas confirmadas", completed: false, responsible: "Carlos" },
+                    { id: "i_2_3", text: "Empresas aguardando retorno", completed: false, responsible: "Carlos" },
+                    { id: "i_2_4", text: "Distribuição das salas", completed: false, responsible: "Ed" },
+                    { id: "i_2_5", text: "Quantidade de representantes por empresa", completed: false, responsible: "Bruna" },
+                    { id: "i_2_6", text: "Orientações pré-evento para as empresas", completed: false, responsible: "Bruna" }
                 ]
             },
             {
                 id: "cat_3",
-                title: "Alunos e Equipe de Apoio",
+                title: "👥 Alunos e Equipe de Apoio",
                 icon: "fa-users",
                 items: [
-                    { id: "i_3_1", text: "Quantidade de alunos de apoio", completed: false },
-                    { id: "i_3_2", text: "Alunos de Administração", completed: false },
-                    { id: "i_3_3", text: "Alunos de Enfermagem", completed: false },
-                    { id: "i_3_4", text: "Verificar participação do BCV", completed: false },
-                    { id: "i_3_5", text: "Função de cada grupo", completed: false },
-                    { id: "i_3_6", text: "Uniforme/vestimenta", completed: false }
+                    { id: "i_3_1", text: "Quantidade de alunos de apoio", completed: false, responsible: "Ed" },
+                    { id: "i_3_2", text: "Alunos de Administração", completed: false, responsible: "Ed" },
+                    { id: "i_3_3", text: "Alunos de Enfermagem", completed: false, responsible: "Bruna" },
+                    { id: "i_3_4", text: "Verificar participação do BCV", completed: false, responsible: "Carlos" },
+                    { id: "i_3_5", text: "Função de cada grupo", completed: false, responsible: "Ed" },
+                    { id: "i_3_6", text: "Uniforme/vestimenta", completed: false, responsible: "Bruna" }
                 ]
             },
             {
                 id: "cat_4",
-                title: "Decoração e Identidade Visual",
+                title: "🎨 Decoração e Identidade Visual",
                 icon: "fa-palette",
                 items: [
-                    { id: "i_4_1", text: "Decoração", completed: false },
-                    { id: "i_4_2", text: "Entrada do evento", completed: false },
-                    { id: "i_4_3", text: "Identificação das salas", completed: false }
+                    { id: "i_4_1", text: "Decoração geral do evento", completed: false, responsible: "Outro" },
+                    { id: "i_4_2", text: "Entrada do evento", completed: false, responsible: "Outro" },
+                    { id: "i_4_3", text: "Identificação das salas", completed: false, responsible: "Outro" }
                 ]
             },
             {
                 id: "cat_5",
-                title: "Coffee e Brindes para Empresas",
+                title: "☕ Coffee e Brindes para Empresas",
                 icon: "fa-coffee",
                 items: [
-                    { id: "i_5_1", text: "Coffee para empresas", completed: false },
-                    { id: "i_5_2", text: "Brindes para empresas", completed: false },
-                    { id: "i_5_3", text: "Escolha do brinde", completed: false },
-                    { id: "i_5_4", text: "Quantidade", completed: false },
-                    { id: "i_5_5", text: "Embalagem/cartão de agradecimento", completed: false }
+                    { id: "i_5_1", text: "Coffee para empresas", completed: false, responsible: "Bruna" },
+                    { id: "i_5_2", text: "Brindes para empresas", completed: false, responsible: "Bruna" },
+                    { id: "i_5_3", text: "Escolha do brinde", completed: false, responsible: "Bruna" },
+                    { id: "i_5_4", text: "Quantidade necessária", completed: false, responsible: "Bruna" },
+                    { id: "i_5_5", text: "Embalagem / cartão de agradecimento", completed: false, responsible: "Bruna" }
                 ]
             },
             {
                 id: "cat_6",
-                title: "Divulgação",
+                title: "📢 Divulgação",
                 icon: "fa-bullhorn",
                 items: [
-                    { id: "i_6_1", text: "Arte inicial com a data", completed: false },
-                    { id: "i_6_2", text: "Arte oficial", completed: false },
-                    { id: "i_6_3", text: "Redes sociais", completed: false },
-                    { id: "i_6_4", text: "Grupos de WhatsApp", completed: false },
-                    { id: "i_6_5", text: "Alunos", completed: false },
-                    { id: "i_6_6", text: "Ex-alunos", completed: false },
-                    { id: "i_6_7", text: "Comunidade", completed: false },
-                    { id: "i_6_8", text: "Artes das empresas confirmadas", completed: false },
-                    { id: "i_6_9", text: "Divulgação das vagas", completed: false },
-                    { id: "i_6_10", text: "Contagem regressiva", completed: false },
-                    { id: "i_6_11", text: "Calendário de divulgação", completed: false },
-                    { id: "i_6_12", text: "Responsável pelas postagens", completed: false },
-                    { id: "i_6_13", text: "Live", completed: false }
+                    { id: "i_6_1", text: "Arte inicial com a data", completed: false, responsible: "Carlos" },
+                    { id: "i_6_2", text: "Arte oficial", completed: false, responsible: "Carlos" },
+                    { id: "i_6_3", text: "Redes sociais", completed: false, responsible: "Carlos" },
+                    { id: "i_6_4", text: "Grupos de WhatsApp", completed: false, responsible: "Carlos" },
+                    { id: "i_6_5", text: "Divulgação para alunos", completed: false, responsible: "Ed" },
+                    { id: "i_6_6", text: "Divulgação para ex-alunos", completed: false, responsible: "Ed" },
+                    { id: "i_6_7", text: "Divulgação para a comunidade", completed: false, responsible: "Carlos" },
+                    { id: "i_6_8", text: "Artes das empresas confirmadas", completed: false, responsible: "Carlos" },
+                    { id: "i_6_9", text: "Divulgação das vagas disponíveis", completed: false, responsible: "Carlos" },
+                    { id: "i_6_10", text: "Contagem regressiva", completed: false, responsible: "Carlos" },
+                    { id: "i_6_11", text: "Calendário de divulgação", completed: false, responsible: "Carlos" },
+                    { id: "i_6_12", text: "Responsável pelas postagens", completed: false, responsible: "Carlos" },
+                    { id: "i_6_13", text: "Live do evento", completed: false, responsible: "Carlos" }
                 ]
             },
             {
                 id: "cat_7",
-                title: "Candidatos e Currículos",
+                title: "📝 Candidatos e Currículos",
                 icon: "fa-file-alt",
                 items: [
-                    { id: "i_7_1", text: "Formulário/QR Code", completed: false },
-                    { id: "i_7_2", text: "Recepção e credenciamento", completed: false }
+                    { id: "i_7_1", text: "Formulário / QR Code de inscrição", completed: false, responsible: "Ed" },
+                    { id: "i_7_2", text: "Recepção e credenciamento", completed: false, responsible: "Bruna" }
                 ]
             },
             {
                 id: "cat_8",
-                title: "Estrutura no Dia",
+                title: "🏢 Estrutura no Dia",
                 icon: "fa-cubes",
                 items: [
-                    { id: "i_8_1", text: "Mesas e cadeiras", completed: false },
-                    { id: "i_8_2", text: "Tomadas/energia", completed: false }
+                    { id: "i_8_1", text: "Mesas e cadeiras suficientes", completed: false, responsible: "Ed" },
+                    { id: "i_8_2", text: "Tomadas / pontos de energia", completed: false, responsible: "Ed" }
                 ]
             },
             {
                 id: "cat_9",
-                title: "Serviços e Atividades",
+                title: "🩺 Serviços e Atividades",
                 icon: "fa-user-nurse",
                 items: [
-                    { id: "i_9_1", text: "Confirmar serviços de saúde", completed: false },
-                    { id: "i_9_2", text: "Participação da Enfermagem", completed: false },
-                    { id: "i_9_3", text: "Quais serviços serão oferecidos", completed: false },
-                    { id: "i_9_4", text: "Espaço dos serviços", completed: false },
-                    { id: "i_9_5", text: "Outras atividades da feira", completed: false }
+                    { id: "i_9_1", text: "Confirmar serviços de saúde", completed: false, responsible: "Bruna" },
+                    { id: "i_9_2", text: "Participação da Enfermagem", completed: false, responsible: "Bruna" },
+                    { id: "i_9_3", text: "Quais serviços serão oferecidos", completed: false, responsible: "Bruna" },
+                    { id: "i_9_4", text: "Espaço dedicado aos serviços", completed: false, responsible: "Ed" },
+                    { id: "i_9_5", text: "Outras atividades da feira", completed: false, responsible: "Carlos" }
                 ]
             },
             {
                 id: "cat_10",
-                title: "Registro",
+                title: "📸 Registro",
                 icon: "fa-camera",
                 items: [
-                    { id: "i_10_1", text: "Responsável por fotos", completed: false },
-                    { id: "i_10_2", text: "Responsável por vídeos", completed: false },
-                    { id: "i_10_3", text: "Stories", completed: false }
+                    { id: "i_10_1", text: "Responsável por fotos", completed: false, responsible: "Carlos" },
+                    { id: "i_10_2", text: "Responsável por vídeos", completed: false, responsible: "Carlos" },
+                    { id: "i_10_3", text: "Stories em tempo real", completed: false, responsible: "Carlos" }
                 ]
             },
             {
                 id: "cat_11",
-                title: "Pós-Evento",
+                title: "📊 Pós-Evento",
                 icon: "fa-chart-line",
                 items: [
-                    { id: "i_11_1", text: "Contabilizar participantes", completed: false },
-                    { id: "i_11_2", text: "Currículos recebidos", completed: false },
-                    { id: "i_11_3", text: "Entrevistas realizadas", completed: false },
-                    { id: "i_11_4", text: "Encaminhamentos", completed: false },
-                    { id: "i_11_5", text: "Acompanhar alunos em processos seletivos", completed: false },
-                    { id: "i_11_6", text: "Acompanhar contratações", completed: false },
-                    { id: "i_11_7", text: "Feedback das empresas", completed: false },
-                    { id: "i_11_8", text: "Agradecimento às empresas", completed: false },
-                    { id: "i_11_9", text: "Organizar resultados", completed: false }
+                    { id: "i_11_1", text: "Contabilizar participantes", completed: false, responsible: "Ed" },
+                    { id: "i_11_2", text: "Total de currículos recebidos", completed: false, responsible: "Ed" },
+                    { id: "i_11_3", text: "Entrevistas realizadas", completed: false, responsible: "Carlos" },
+                    { id: "i_11_4", text: "Encaminhamentos feitos", completed: false, responsible: "Bruna" },
+                    { id: "i_11_5", text: "Acompanhar alunos em processos seletivos", completed: false, responsible: "Bruna" },
+                    { id: "i_11_6", text: "Acompanhar contratações", completed: false, responsible: "Bruna" },
+                    { id: "i_11_7", text: "Feedback das empresas", completed: false, responsible: "Carlos" },
+                    { id: "i_11_8", text: "Agradecimento às empresas", completed: false, responsible: "Carlos" },
+                    { id: "i_11_9", text: "Organizar e apresentar resultados", completed: false, responsible: "Ed" }
                 ]
             }
         ];
 
-        // Anotações padrão
         const initialNotes = [
-            { id: "n_1", point: "Espaço do Coffee", decision: "Definido no foyer principal", responsible: "Coordenação / Até 20/10" }
+            { id: "n_1", point: "Espaço do Coffee", decision: "Definido no hall de entrada com mesas altas", responsible: "Bruna - Até 15/10" }
         ];
 
-        // Estado da Aplicação
-        let categories = [];
-        let notes = [];
+        // Global State
+        window.appState = {
+            categories: initialCategories,
+            notes: initialNotes,
+            filterResponsible: 'ALL',
+            filterStatus: 'ALL',
+            currentUser: null
+        };
 
-        function init() {
-            const savedCategories = localStorage.getItem("feira_checklist_data");
-            const savedNotes = localStorage.getItem("feira_notes_data");
+        function getDocRef() {
+            return doc(db, 'artifacts', appId, 'public', 'data', 'checklists', currentRoomId);
+        }
 
-            if (savedCategories) {
-                categories = JSON.parse(savedCategories);
-            } else {
-                categories = JSON.parse(JSON.stringify(initialData));
+        async function setupSync() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.warn("Auth fallback mode active:", err);
             }
 
-            if (savedNotes) {
-                notes = JSON.parse(savedNotes);
-            } else {
-                notes = JSON.parse(JSON.stringify(initialNotes));
-            }
+            onAuthStateChanged(auth, (user) => {
+                if (!user) return;
+                window.appState.currentUser = user;
 
+                // Subscribe to Firestore updates
+                const docRef = getDocRef();
+                onSnapshot(docRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.data();
+                        if (data.categories) window.appState.categories = data.categories;
+                        if (data.notes) window.appState.notes = data.notes;
+                    } else {
+                        // First initialization
+                        saveToCloud();
+                    }
+                    
+                    updateSyncBadge(true);
+                    renderAll();
+                }, (error) => {
+                    console.error("Firestore sync error:", error);
+                    updateSyncBadge(false);
+                });
+            });
+        }
+
+        async function saveToCloud() {
+            if (!auth.currentUser) return;
+            try {
+                const docRef = getDocRef();
+                await setDoc(docRef, {
+                    categories: window.appState.categories,
+                    notes: window.appState.notes,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+            } catch (e) {
+                console.error("Cloud save failed:", e);
+                updateSyncBadge(false);
+            }
+        }
+
+        function updateSyncBadge(isLive) {
+            const badge = document.getElementById("sync-status-badge");
+            const text = document.getElementById("sync-status-text");
+            if (isLive) {
+                badge.className = "px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold rounded-full flex items-center gap-1.5";
+                text.innerText = "Sincronizado ao vivo";
+            } else {
+                badge.className = "px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold rounded-full flex items-center gap-1.5";
+                text.innerText = "Sincronizando...";
+            }
+        }
+
+        window.renderAll = function() {
             renderChecklist();
             renderNotes();
             updateProgress();
             populateCategorySelect();
-        }
-
-        function saveData() {
-            localStorage.setItem("feira_checklist_data", JSON.stringify(categories));
-            localStorage.setItem("feira_notes_data", JSON.stringify(notes));
-            updateProgress();
-        }
+        };
 
         function renderChecklist() {
             const container = document.getElementById("checklist-container");
             container.innerHTML = "";
 
+            const { categories, filterResponsible, filterStatus } = window.appState;
+
             categories.forEach(category => {
+                const filteredItems = category.items.filter(item => {
+                    if (filterResponsible === 'UNASSIGNED' && item.responsible) return false;
+                    if (filterResponsible !== 'ALL' && filterResponsible !== 'UNASSIGNED' && item.responsible !== filterResponsible) return false;
+                    
+                    if (filterStatus === 'PENDING' && item.completed) return false;
+                    if (filterStatus === 'COMPLETED' && !item.completed) return false;
+
+                    return true;
+                });
+
+                if (filteredItems.length === 0 && filterResponsible !== 'ALL') return;
+
                 const completedInCat = category.items.filter(i => i.completed).length;
                 const totalInCat = category.items.length;
                 const isAllDone = totalInCat > 0 && completedInCat === totalInCat;
 
                 const catCard = document.createElement("div");
-                catCard.className = "bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-200 hover:shadow-md";
+                catCard.className = "bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-200 hover:shadow-md";
 
                 catCard.innerHTML = `
-                    <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between cursor-pointer select-none" onclick="toggleCategory('${category.id}')">
+                    <div class="p-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between cursor-pointer select-none" onclick="toggleCategory('${category.id}')">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-semibold">
-                                <i class="fas ${category.icon}"></i>
+                            <div class="w-10 h-10 rounded-xl bg-grau-navy text-white flex items-center justify-center font-bold text-base shadow-sm">
+                                <i class="fas ${category.icon} text-grau-green"></i>
                             </div>
                             <div>
                                 <h3 class="font-bold text-slate-800 text-sm md:text-base">${category.title}</h3>
-                                <p class="text-xs text-slate-400">${completedInCat} de ${totalInCat} concluídos</p>
+                                <p class="text-xs text-slate-400 font-medium">${completedInCat} de ${totalInCat} concluídos</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            ${isAllDone ? '<span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium"><i class="fas fa-check text-[10px]"></i> Concluído</span>' : ''}
-                            <i id="chevron-${category.id}" class="fas fa-chevron-down text-slate-400 text-sm transition-transform duration-300"></i>
+                        <div class="flex items-center gap-2">
+                            ${isAllDone ? '<span class="text-[11px] bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-bold border border-emerald-200"><i class="fas fa-check"></i> Concluído</span>' : ''}
+                            <i id="chevron-${category.id}" class="fas fa-chevron-down text-slate-400 text-xs transition-transform duration-300"></i>
                         </div>
                     </div>
                     
-                    <div id="content-${category.id}" class="p-4 space-y-2">
-                        ${category.items.map(item => `
-                            <label class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors group">
-                                <input type="checkbox" 
-                                    class="checkbox-custom mt-0.5 w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer" 
-                                    ${item.completed ? 'checked' : ''} 
-                                    onchange="toggleItem('${category.id}', '${item.id}')">
-                                <div class="text-sm text-slate-700 leading-snug flex-1 group-hover:text-slate-900">
-                                    ${item.text}
+                    <div id="content-${category.id}" class="p-4 space-y-2.5">
+                        ${filteredItems.length === 0 ? '<p class="text-xs text-slate-400 italic py-2 text-center">Nenhum item neste filtro.</p>' : ''}
+                        ${filteredItems.map(item => `
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-xl hover:bg-slate-50 border border-slate-100 transition-colors group">
+                                <label class="flex items-start gap-3 cursor-pointer flex-1">
+                                    <input type="checkbox" 
+                                        class="checkbox-custom mt-0.5 w-4 h-4 text-grau-green border-slate-300 rounded focus:ring-grau-green cursor-pointer" 
+                                        ${item.completed ? 'checked' : ''} 
+                                        onchange="toggleItem('${category.id}', '${item.id}')">
+                                    <span class="item-text text-sm font-medium ${item.completed ? 'line-through text-slate-400' : 'text-slate-700'}">
+                                        ${item.text}
+                                    </span>
+                                </label>
+                                
+                                <div class="flex items-center gap-2 ml-7 sm:ml-0">
+                                    <select onchange="updateItemResponsible('${category.id}', '${item.id}', this.value)" class="text-xs bg-slate-100 border border-slate-200 rounded-lg px-2 py-1 font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-grau-green">
+                                        <option value="" ${!item.responsible ? 'selected' : ''}>Não atribuído</option>
+                                        <option value="Ed" ${item.responsible === 'Ed' ? 'selected' : ''}>👤 Ed</option>
+                                        <option value="Bruna" ${item.responsible === 'Bruna' ? 'selected' : ''}>👤 Bruna</option>
+                                        <option value="Carlos" ${item.responsible === 'Carlos' ? 'selected' : ''}>👤 Carlos</option>
+                                        <option value="Outro" ${item.responsible === 'Outro' ? 'selected' : ''}>👥 Outro</option>
+                                    </select>
+
+                                    <button onclick="deleteItem('${category.id}', '${item.id}')" class="text-slate-300 hover:text-red-500 text-xs p-1 opacity-0 group-hover:opacity-100 transition-opacity" title="Excluir item">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
-                                <button onclick="event.preventDefault(); deleteItem('${category.id}', '${item.id}')" class="text-slate-300 hover:text-red-500 text-xs px-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </label>
+                            </div>
                         `).join('')}
                     </div>
                 `;
@@ -399,66 +606,45 @@
             });
         }
 
-        function toggleItem(categoryId, itemId) {
-            const category = categories.find(c => c.id === categoryId);
-            if (category) {
-                const item = category.items.find(i => i.id === itemId);
-                if (item) {
-                    item.completed = !item.completed;
-                    saveData();
-                    renderChecklist();
-                }
-            }
-        }
+        function renderNotes() {
+            const tbody = document.getElementById("notes-table-body");
+            tbody.innerHTML = "";
 
-        function toggleCategory(categoryId) {
-            const content = document.getElementById(`content-${categoryId}`);
-            const chevron = document.getElementById(`chevron-${categoryId}`);
-            if (content.classList.contains('hidden')) {
-                content.classList.remove('hidden');
-                chevron.classList.remove('-rotate-90');
-            } else {
-                content.classList.add('hidden');
-                chevron.classList.add('-rotate-90');
-            }
-        }
+            const { notes } = window.appState;
 
-        function expandAll() {
-            categories.forEach(cat => {
-                const content = document.getElementById(`content-${cat.id}`);
-                const chevron = document.getElementById(`chevron-${cat.id}`);
-                if (content && chevron) {
-                    content.classList.remove('hidden');
-                    chevron.classList.remove('-rotate-90');
-                }
+            if (notes.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="py-6 text-center text-slate-400 text-xs">
+                            Nenhuma anotação registrada. Clique em "Nova Anotação" para incluir um registro.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            notes.forEach((note, index) => {
+                const row = document.createElement("tr");
+                row.className = index % 2 === 0 ? "bg-white" : "bg-slate-50/50";
+                row.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-slate-800">${note.point || '-'}</td>
+                    <td class="py-3 px-4 text-slate-600">${note.decision || '-'}</td>
+                    <td class="py-3 px-4 text-slate-600"><span class="bg-slate-100 border border-slate-200 text-slate-700 px-2.5 py-1 rounded-lg text-xs font-semibold">${note.responsible || '-'}</span></td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="deleteNote('${note.id}')" class="text-slate-400 hover:text-red-600 text-xs transition-colors p-1">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
             });
-        }
-
-        function collapseAll() {
-            categories.forEach(cat => {
-                const content = document.getElementById(`content-${cat.id}`);
-                const chevron = document.getElementById(`chevron-${cat.id}`);
-                if (content && chevron) {
-                    content.classList.add('hidden');
-                    chevron.classList.add('-rotate-90');
-                }
-            });
-        }
-
-        function deleteItem(categoryId, itemId) {
-            const category = categories.find(c => c.id === categoryId);
-            if (category) {
-                category.items = category.items.filter(i => i.id !== itemId);
-                saveData();
-                renderChecklist();
-            }
         }
 
         function updateProgress() {
             let total = 0;
             let completed = 0;
 
-            categories.forEach(cat => {
+            window.appState.categories.forEach(cat => {
                 total += cat.items.length;
                 completed += cat.items.filter(i => i.completed).length;
             });
@@ -471,10 +657,110 @@
             document.getElementById("total-count").innerText = total;
         }
 
+        // User Action Handlers
+        window.toggleItem = function(categoryId, itemId) {
+            const category = window.appState.categories.find(c => c.id === categoryId);
+            if (category) {
+                const item = category.items.find(i => i.id === itemId);
+                if (item) {
+                    item.completed = !item.completed;
+                    saveToCloud();
+                    renderAll();
+                }
+            }
+        };
+
+        window.updateItemResponsible = function(categoryId, itemId, newResp) {
+            const category = window.appState.categories.find(c => c.id === categoryId);
+            if (category) {
+                const item = category.items.find(i => i.id === itemId);
+                if (item) {
+                    item.responsible = newResp;
+                    saveToCloud();
+                    showToast(`Atribuído a: ${newResp || 'Não atribuído'}`);
+                    renderAll();
+                }
+            }
+        };
+
+        window.deleteItem = function(categoryId, itemId) {
+            const category = window.appState.categories.find(c => c.id === categoryId);
+            if (category) {
+                category.items = category.items.filter(i => i.id !== itemId);
+                saveToCloud();
+                renderAll();
+                showToast("Item removido!");
+            }
+        };
+
+        window.toggleCategory = function(categoryId) {
+            const content = document.getElementById(`content-${categoryId}`);
+            const chevron = document.getElementById(`chevron-${categoryId}`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                chevron.classList.remove('-rotate-90');
+            } else {
+                content.classList.add('hidden');
+                chevron.classList.add('-rotate-90');
+            }
+        };
+
+        window.setResponsibleFilter = function(resp) {
+            window.appState.filterResponsible = resp;
+            
+            document.querySelectorAll('.resp-filter-btn').forEach(btn => {
+                btn.className = "resp-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-700 hover:bg-slate-200";
+            });
+
+            const activeBtn = document.getElementById(`filter-resp-${resp}`);
+            if (activeBtn) {
+                activeBtn.className = "resp-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-grau-navy text-white shadow-sm";
+            }
+
+            renderChecklist();
+        };
+
+        window.setStatusFilter = function(status) {
+            window.appState.filterStatus = status;
+
+            ['ALL', 'PENDING', 'COMPLETED'].forEach(s => {
+                const el = document.getElementById(`status-filter-${s}`);
+                if (s === status) {
+                    el.className = "text-grau-navy font-bold underline decoration-2 underline-offset-4";
+                } else {
+                    el.className = "text-slate-500 hover:text-slate-800";
+                }
+            });
+
+            renderChecklist();
+        };
+
+        window.expandAll = function() {
+            window.appState.categories.forEach(cat => {
+                const content = document.getElementById(`content-${cat.id}`);
+                const chevron = document.getElementById(`chevron-${cat.id}`);
+                if (content && chevron) {
+                    content.classList.remove('hidden');
+                    chevron.classList.remove('-rotate-90');
+                }
+            });
+        };
+
+        window.collapseAll = function() {
+            window.appState.categories.forEach(cat => {
+                const content = document.getElementById(`content-${cat.id}`);
+                const chevron = document.getElementById(`chevron-${cat.id}`);
+                if (content && chevron) {
+                    content.classList.add('hidden');
+                    chevron.classList.add('-rotate-90');
+                }
+            });
+        };
+
         function populateCategorySelect() {
             const select = document.getElementById("modal-category-select");
             select.innerHTML = "";
-            categories.forEach(cat => {
+            window.appState.categories.forEach(cat => {
                 const option = document.createElement("option");
                 option.value = cat.id;
                 option.textContent = cat.title;
@@ -482,113 +768,117 @@
             });
         }
 
-        function openAddItemModal() {
+        window.openAddItemModal = function() {
             document.getElementById("modal-item-title").value = "";
+            document.getElementById("modal-item-resp").value = "";
             document.getElementById("modal-add-item").classList.remove("hidden");
             document.getElementById("modal-add-item").classList.add("flex");
-        }
+        };
 
-        function openAddNoteModal() {
+        window.openAddNoteModal = function() {
             document.getElementById("modal-note-point").value = "";
             document.getElementById("modal-note-decision").value = "";
             document.getElementById("modal-note-responsible").value = "";
             document.getElementById("modal-add-note").classList.remove("hidden");
             document.getElementById("modal-add-note").classList.add("flex");
-        }
+        };
 
-        function closeModal(modalId) {
+        window.closeModal = function(modalId) {
             document.getElementById(modalId).classList.add("hidden");
             document.getElementById(modalId).classList.remove("flex");
-        }
+        };
 
-        function saveNewItem() {
+        window.saveNewItem = function() {
             const categoryId = document.getElementById("modal-category-select").value;
             const title = document.getElementById("modal-item-title").value.trim();
+            const resp = document.getElementById("modal-item-resp").value;
 
             if (!title) return;
 
-            const category = categories.find(c => c.id === categoryId);
+            const category = window.appState.categories.find(c => c.id === categoryId);
             if (category) {
                 category.items.push({
                     id: `i_${Date.now()}`,
                     text: title,
-                    completed: false
+                    completed: false,
+                    responsible: resp
                 });
-                saveData();
-                renderChecklist();
+                saveToCloud();
+                renderAll();
                 closeModal("modal-add-item");
+                showToast("Novo item adicionado!");
             }
-        }
+        };
 
-        function renderNotes() {
-            const tbody = document.getElementById("notes-table-body");
-            tbody.innerHTML = "";
-
-            if (notes.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="py-6 text-center text-slate-400 text-sm">
-                            Nenhuma anotação inserida ainda.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            notes.forEach((note, index) => {
-                const row = document.createElement("tr");
-                row.className = index % 2 === 0 ? "bg-white" : "bg-slate-50/50";
-                row.innerHTML = `
-                    <td class="py-3 px-4 font-medium text-slate-800">${note.point || '-'}</td>
-                    <td class="py-3 px-4 text-slate-600">${note.decision || '-'}</td>
-                    <td class="py-3 px-4 text-slate-600"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs">${note.responsible || '-'}</span></td>
-                    <td class="py-3 px-4 text-center">
-                        <button onclick="deleteNote('${note.id}')" class="text-slate-400 hover:text-red-600 text-xs transition-colors">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function saveNewNote() {
+        window.saveNewNote = function() {
             const point = document.getElementById("modal-note-point").value.trim();
             const decision = document.getElementById("modal-note-decision").value.trim();
             const responsible = document.getElementById("modal-note-responsible").value.trim();
 
             if (!point && !decision) return;
 
-            notes.push({
+            window.appState.notes.push({
                 id: `n_${Date.now()}`,
-                point: point,
-                decision: decision,
-                responsible: responsible
+                point,
+                decision,
+                responsible
             });
 
-            saveData();
+            saveToCloud();
             renderNotes();
             closeModal("modal-add-note");
-        }
+            showToast("Anotação registrada!");
+        };
 
-        function deleteNote(noteId) {
-            notes = notes.filter(n => n.id !== noteId);
-            saveData();
+        window.deleteNote = function(noteId) {
+            window.appState.notes = window.appState.notes.filter(n => n.id !== noteId);
+            saveToCloud();
             renderNotes();
-        }
+            showToast("Anotação excluída!");
+        };
 
-        function resetAll() {
-            if (confirm("Tem certeza que deseja redefinir o checklist para o estado inicial? Todas as marcações serão resetadas.")) {
-                categories = JSON.parse(JSON.stringify(initialData));
-                notes = JSON.parse(JSON.stringify(initialNotes));
-                saveData();
-                renderChecklist();
-                renderNotes();
+        window.copyShareLink = function() {
+            const shareUrl = window.location.href;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    showToast("Link do checklist copiado!");
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(shareUrl);
+                });
+            } else {
+                fallbackCopyTextToClipboard(shareUrl);
             }
+        };
+
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Link do checklist copiado!");
+            } catch (err) {
+                showToast("Copie o endereço da barra do navegador.");
+            }
+            document.body.removeChild(textArea);
         }
 
-        // Executa ao carregar a página
-        window.onload = init;
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            document.getElementById("toast-message").innerText = msg;
+            toast.classList.remove("hidden");
+            toast.classList.add("flex");
+            setTimeout(() => {
+                toast.classList.add("hidden");
+                toast.classList.remove("flex");
+            }, 3000);
+        }
+
+        window.addEventListener('load', () => {
+            setupSync();
+        });
     </script>
 </body>
 </html>
