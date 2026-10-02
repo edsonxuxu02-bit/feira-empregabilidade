@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist - 2ª Feira de Empregabilidade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .checkbox-custom:checked + div {
+            text-decoration: line-through;
+            color: #9CA3AF;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F3F4F6;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+
+    <header class="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white shadow-lg">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-blue-800 bg-opacity-50 text-blue-100 text-xs font-semibold rounded-full uppercase tracking-wider mb-2">
+                        1ª Reunião de Alinhamento
+                    </span>
+                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">2ª Feira de Empregabilidade</h1>
+                    <p class="mt-2 text-blue-100 flex items-center gap-2 text-sm md:text-base">
+                        <span><i class="far fa-calendar-alt"></i> 27/10/2026</span>
+                        <span class="mx-1">•</span>
+                        <span><i class="far fa-clock"></i> 13h às 17h</span>
+                    </p>
+                </div>
+                
+                <!-- Card de Progresso Geral -->
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 w-full md:w-80 shadow-inner">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-medium uppercase tracking-wider text-blue-100">Progresso Geral</span>
+                        <span id="progress-percentage" class="text-lg font-bold">0%</span>
+                    </div>
+                    <div class="w-full bg-blue-950/40 rounded-full h-3 overflow-hidden p-0.5">
+                        <div id="progress-bar" class="bg-gradient-to-r from-emerald-400 to-teal-300 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <div class="mt-2 text-right text-xs text-blue-100/80">
+                        <span id="completed-count">0</span> de <span id="total-count">0</span> tarefas concluídas
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 mt-8">
+        <!-- Ações e Filtros -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <div class="flex items-center gap-2">
+                <button onclick="expandAll()" class="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1.5">
+                    <i class="fas fa-angle-double-down"></i> Expandir Todos
+                </button>
+                <button onclick="collapseAll()" class="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1.5">
+                    <i class="fas fa-angle-double-up"></i> Recolher Todos
+                </button>
+            </div>
+            
+            <div class="flex items-center gap-2 ml-auto">
+                <button onclick="openAddItemModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center gap-2">
+                    <i class="fas fa-plus"></i> Adicionar Item
+                </button>
+                <button onclick="resetAll()" class="px-3 py-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg text-sm transition-colors" title="Redefinir checklist">
+                    <i class="fas fa-undo-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="checklist-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Categorias serão inseridas dinamicamente via JS -->
+        </div>
+
+        <section class="mt-10 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 bg-slate-900 text-white flex justify-between items-center flex-wrap gap-4">
+                <div>
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-clipboard-list text-amber-400"></i> Anotações / Decisões
+                    </h2>
+                    <p class="text-slate-400 text-xs mt-1">Registre decisões tomadas durante as reuniões e defina prazos e responsáveis.</p>
+                </div>
+                <button onclick="openAddNoteModal()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-lg text-xs transition-colors flex items-center gap-1.5">
+                    <i class="fas fa-plus"></i> Nova Anotação
+                </button>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+                            <th class="py-3 px-4 w-1/3">Ponto / Tópico</th>
+                            <th class="py-3 px-4 w-1/3">Decisão / Observação</th>
+                            <th class="py-3 px-4 w-1/4">Responsável / Prazo</th>
+                            <th class="py-3 px-4 text-center w-16">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notes-table-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                        <!-- Anotações dinâmicas serão inseridas aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Novo Item -->
+    <div id="modal-add-item" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-tasks text-indigo-600"></i> Novo Item de Checklist
+            </h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Categoria</label>
+                    <select id="modal-category-select" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <!-- Categorias preenchidas dinamicamente -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Descrição da Tarefa</label>
+                    <input type="text" id="modal-item-title" placeholder="Ex: Confirmar suporte de som" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button onclick="closeModal('modal-add-item')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+                <button onclick="saveNewItem()" class="px-4 py-2 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nova Anotação -->
+    <div id="modal-add-note" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fas fa-sticky-note text-amber-500"></i> Nova Anotação / Decisão
+            </h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Ponto / Assunto</label>
+                    <input type="text" id="modal-note-point" placeholder="Ex: Credenciamento" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Decisão / Observação</label>
+                    <textarea id="modal-note-decision" rows="3" placeholder="Ex: Utilizar leitores de QR code na entrada principal" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Responsável / Prazo</label>
+                    <input type="text" id="modal-note-responsible" placeholder="Ex: Maria / Até 15/10" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button onclick="closeModal('modal-add-note')" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
+                <button onclick="saveNewNote()" class="px-4 py-2 text-sm bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-lg">Salvar Anotação</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados Iniciais Base do Documento
+        const initialData = [
+            {
+                id: "cat_1",
+                title: "Evento e Estrutura",
+                icon: "fa-calendar-alt",
+                items: [
+                    { id: "i_1_1", text: "Confirmar local e espaços utilizados", completed: false },
+                    { id: "i_1_2", text: "Quantidade máxima de empresas", completed: false }
+                ]
+            },
+            {
+                id: "cat_2",
+                title: "Empresas",
+                icon: "fa-building",
+                items: [
+                    { id: "i_2_1", text: "Empresas já convidadas", completed: false },
+                    { id: "i_2_2", text: "Empresas confirmadas", completed: false },
+                    { id: "i_2_3", text: "Empresas aguardando retorno", completed: false },
+                    { id: "i_2_4", text: "Distribuição das salas", completed: false },
+                    { id: "i_2_5", text: "Quantidade de representantes por empresa", completed: false },
+                    { id: "i_2_6", text: "Orientações pré-evento para as empresas", completed: false }
+                ]
+            },
+            {
+                id: "cat_3",
+                title: "Alunos e Equipe de Apoio",
+                icon: "fa-users",
+                items: [
+                    { id: "i_3_1", text: "Quantidade de alunos de apoio", completed: false },
+                    { id: "i_3_2", text: "Alunos de Administração", completed: false },
+                    { id: "i_3_3", text: "Alunos de Enfermagem", completed: false },
+                    { id: "i_3_4", text: "Verificar participação do BCV", completed: false },
+                    { id: "i_3_5", text: "Função de cada grupo", completed: false },
+                    { id: "i_3_6", text: "Uniforme/vestimenta", completed: false }
+                ]
+            },
+            {
+                id: "cat_4",
+                title: "Decoração e Identidade Visual",
+                icon: "fa-palette",
+                items: [
+                    { id: "i_4_1", text: "Decoração", completed: false },
+                    { id: "i_4_2", text: "Entrada do evento", completed: false },
+                    { id: "i_4_3", text: "Identificação das salas", completed: false }
+                ]
+            },
+            {
+                id: "cat_5",
+                title: "Coffee e Brindes para Empresas",
+                icon: "fa-coffee",
+                items: [
+                    { id: "i_5_1", text: "Coffee para empresas", completed: false },
+                    { id: "i_5_2", text: "Brindes para empresas", completed: false },
+                    { id: "i_5_3", text: "Escolha do brinde", completed: false },
+                    { id: "i_5_4", text: "Quantidade", completed: false },
+                    { id: "i_5_5", text: "Embalagem/cartão de agradecimento", completed: false }
+                ]
+            },
+            {
+                id: "cat_6",
+                title: "Divulgação",
+                icon: "fa-bullhorn",
+                items: [
+                    { id: "i_6_1", text: "Arte inicial com a data", completed: false },
+                    { id: "i_6_2", text: "Arte oficial", completed: false },
+                    { id: "i_6_3", text: "Redes sociais", completed: false },
+                    { id: "i_6_4", text: "Grupos de WhatsApp", completed: false },
+                    { id: "i_6_5", text: "Alunos", completed: false },
+                    { id: "i_6_6", text: "Ex-alunos", completed: false },
+                    { id: "i_6_7", text: "Comunidade", completed: false },
+                    { id: "i_6_8", text: "Artes das empresas confirmadas", completed: false },
+                    { id: "i_6_9", text: "Divulgação das vagas", completed: false },
+                    { id: "i_6_10", text: "Contagem regressiva", completed: false },
+                    { id: "i_6_11", text: "Calendário de divulgação", completed: false },
+                    { id: "i_6_12", text: "Responsável pelas postagens", completed: false },
+                    { id: "i_6_13", text: "Live", completed: false }
+                ]
+            },
+            {
+                id: "cat_7",
+                title: "Candidatos e Currículos",
+                icon: "fa-file-alt",
+                items: [
+                    { id: "i_7_1", text: "Formulário/QR Code", completed: false },
+                    { id: "i_7_2", text: "Recepção e credenciamento", completed: false }
+                ]
+            },
+            {
+                id: "cat_8",
+                title: "Estrutura no Dia",
+                icon: "fa-cubes",
+                items: [
+                    { id: "i_8_1", text: "Mesas e cadeiras", completed: false },
+                    { id: "i_8_2", text: "Tomadas/energia", completed: false }
+                ]
+            },
+            {
+                id: "cat_9",
+                title: "Serviços e Atividades",
+                icon: "fa-user-nurse",
+                items: [
+                    { id: "i_9_1", text: "Confirmar serviços de saúde", completed: false },
+                    { id: "i_9_2", text: "Participação da Enfermagem", completed: false },
+                    { id: "i_9_3", text: "Quais serviços serão oferecidos", completed: false },
+                    { id: "i_9_4", text: "Espaço dos serviços", completed: false },
+                    { id: "i_9_5", text: "Outras atividades da feira", completed: false }
+                ]
+            },
+            {
+                id: "cat_10",
+                title: "Registro",
+                icon: "fa-camera",
+                items: [
+                    { id: "i_10_1", text: "Responsável por fotos", completed: false },
+                    { id: "i_10_2", text: "Responsável por vídeos", completed: false },
+                    { id: "i_10_3", text: "Stories", completed: false }
+                ]
+            },
+            {
+                id: "cat_11",
+                title: "Pós-Evento",
+                icon: "fa-chart-line",
+                items: [
+                    { id: "i_11_1", text: "Contabilizar participantes", completed: false },
+                    { id: "i_11_2", text: "Currículos recebidos", completed: false },
+                    { id: "i_11_3", text: "Entrevistas realizadas", completed: false },
+                    { id: "i_11_4", text: "Encaminhamentos", completed: false },
+                    { id: "i_11_5", text: "Acompanhar alunos em processos seletivos", completed: false },
+                    { id: "i_11_6", text: "Acompanhar contratações", completed: false },
+                    { id: "i_11_7", text: "Feedback das empresas", completed: false },
+                    { id: "i_11_8", text: "Agradecimento às empresas", completed: false },
+                    { id: "i_11_9", text: "Organizar resultados", completed: false }
+                ]
+            }
+        ];
+
+        // Anotações padrão
+        const initialNotes = [
+            { id: "n_1", point: "Espaço do Coffee", decision: "Definido no foyer principal", responsible: "Coordenação / Até 20/10" }
+        ];
+
+        // Estado da Aplicação
+        let categories = [];
+        let notes = [];
+
+        function init() {
+            const savedCategories = localStorage.getItem("feira_checklist_data");
+            const savedNotes = localStorage.getItem("feira_notes_data");
+
+            if (savedCategories) {
+                categories = JSON.parse(savedCategories);
+            } else {
+                categories = JSON.parse(JSON.stringify(initialData));
+            }
+
+            if (savedNotes) {
+                notes = JSON.parse(savedNotes);
+            } else {
+                notes = JSON.parse(JSON.stringify(initialNotes));
+            }
+
+            renderChecklist();
+            renderNotes();
+            updateProgress();
+            populateCategorySelect();
+        }
+
+        function saveData() {
+            localStorage.setItem("feira_checklist_data", JSON.stringify(categories));
+            localStorage.setItem("feira_notes_data", JSON.stringify(notes));
+            updateProgress();
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById("checklist-container");
+            container.innerHTML = "";
+
+            categories.forEach(category => {
+                const completedInCat = category.items.filter(i => i.completed).length;
+                const totalInCat = category.items.length;
+                const isAllDone = totalInCat > 0 && completedInCat === totalInCat;
+
+                const catCard = document.createElement("div");
+                catCard.className = "bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transition-all duration-200 hover:shadow-md";
+
+                catCard.innerHTML = `
+                    <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between cursor-pointer select-none" onclick="toggleCategory('${category.id}')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-semibold">
+                                <i class="fas ${category.icon}"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm md:text-base">${category.title}</h3>
+                                <p class="text-xs text-slate-400">${completedInCat} de ${totalInCat} concluídos</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            ${isAllDone ? '<span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium"><i class="fas fa-check text-[10px]"></i> Concluído</span>' : ''}
+                            <i id="chevron-${category.id}" class="fas fa-chevron-down text-slate-400 text-sm transition-transform duration-300"></i>
+                        </div>
+                    </div>
+                    
+                    <div id="content-${category.id}" class="p-4 space-y-2">
+                        ${category.items.map(item => `
+                            <label class="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors group">
+                                <input type="checkbox" 
+                                    class="checkbox-custom mt-0.5 w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer" 
+                                    ${item.completed ? 'checked' : ''} 
+                                    onchange="toggleItem('${category.id}', '${item.id}')">
+                                <div class="text-sm text-slate-700 leading-snug flex-1 group-hover:text-slate-900">
+                                    ${item.text}
+                                </div>
+                                <button onclick="event.preventDefault(); deleteItem('${category.id}', '${item.id}')" class="text-slate-300 hover:text-red-500 text-xs px-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+
+                container.appendChild(catCard);
+            });
+        }
+
+        function toggleItem(categoryId, itemId) {
+            const category = categories.find(c => c.id === categoryId);
+            if (category) {
+                const item = category.items.find(i => i.id === itemId);
+                if (item) {
+                    item.completed = !item.completed;
+                    saveData();
+                    renderChecklist();
+                }
+            }
+        }
+
+        function toggleCategory(categoryId) {
+            const content = document.getElementById(`content-${categoryId}`);
+            const chevron = document.getElementById(`chevron-${categoryId}`);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                chevron.classList.remove('-rotate-90');
+            } else {
+                content.classList.add('hidden');
+                chevron.classList.add('-rotate-90');
+            }
+        }
+
+        function expandAll() {
+            categories.forEach(cat => {
+                const content = document.getElementById(`content-${cat.id}`);
+                const chevron = document.getElementById(`chevron-${cat.id}`);
+                if (content && chevron) {
+                    content.classList.remove('hidden');
+                    chevron.classList.remove('-rotate-90');
+                }
+            });
+        }
+
+        function collapseAll() {
+            categories.forEach(cat => {
+                const content = document.getElementById(`content-${cat.id}`);
+                const chevron = document.getElementById(`chevron-${cat.id}`);
+                if (content && chevron) {
+                    content.classList.add('hidden');
+                    chevron.classList.add('-rotate-90');
+                }
+            });
+        }
+
+        function deleteItem(categoryId, itemId) {
+            const category = categories.find(c => c.id === categoryId);
+            if (category) {
+                category.items = category.items.filter(i => i.id !== itemId);
+                saveData();
+                renderChecklist();
+            }
+        }
+
+        function updateProgress() {
+            let total = 0;
+            let completed = 0;
+
+            categories.forEach(cat => {
+                total += cat.items.length;
+                completed += cat.items.filter(i => i.completed).length;
+            });
+
+            const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+            document.getElementById("progress-percentage").innerText = `${percentage}%`;
+            document.getElementById("progress-bar").style.width = `${percentage}%`;
+            document.getElementById("completed-count").innerText = completed;
+            document.getElementById("total-count").innerText = total;
+        }
+
+        function populateCategorySelect() {
+            const select = document.getElementById("modal-category-select");
+            select.innerHTML = "";
+            categories.forEach(cat => {
+                const option = document.createElement("option");
+                option.value = cat.id;
+                option.textContent = cat.title;
+                select.appendChild(option);
+            });
+        }
+
+        function openAddItemModal() {
+            document.getElementById("modal-item-title").value = "";
+            document.getElementById("modal-add-item").classList.remove("hidden");
+            document.getElementById("modal-add-item").classList.add("flex");
+        }
+
+        function openAddNoteModal() {
+            document.getElementById("modal-note-point").value = "";
+            document.getElementById("modal-note-decision").value = "";
+            document.getElementById("modal-note-responsible").value = "";
+            document.getElementById("modal-add-note").classList.remove("hidden");
+            document.getElementById("modal-add-note").classList.add("flex");
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add("hidden");
+            document.getElementById(modalId).classList.remove("flex");
+        }
+
+        function saveNewItem() {
+            const categoryId = document.getElementById("modal-category-select").value;
+            const title = document.getElementById("modal-item-title").value.trim();
+
+            if (!title) return;
+
+            const category = categories.find(c => c.id === categoryId);
+            if (category) {
+                category.items.push({
+                    id: `i_${Date.now()}`,
+                    text: title,
+                    completed: false
+                });
+                saveData();
+                renderChecklist();
+                closeModal("modal-add-item");
+            }
+        }
+
+        function renderNotes() {
+            const tbody = document.getElementById("notes-table-body");
+            tbody.innerHTML = "";
+
+            if (notes.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="py-6 text-center text-slate-400 text-sm">
+                            Nenhuma anotação inserida ainda.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            notes.forEach((note, index) => {
+                const row = document.createElement("tr");
+                row.className = index % 2 === 0 ? "bg-white" : "bg-slate-50/50";
+                row.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-slate-800">${note.point || '-'}</td>
+                    <td class="py-3 px-4 text-slate-600">${note.decision || '-'}</td>
+                    <td class="py-3 px-4 text-slate-600"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs">${note.responsible || '-'}</span></td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="deleteNote('${note.id}')" class="text-slate-400 hover:text-red-600 text-xs transition-colors">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function saveNewNote() {
+            const point = document.getElementById("modal-note-point").value.trim();
+            const decision = document.getElementById("modal-note-decision").value.trim();
+            const responsible = document.getElementById("modal-note-responsible").value.trim();
+
+            if (!point && !decision) return;
+
+            notes.push({
+                id: `n_${Date.now()}`,
+                point: point,
+                decision: decision,
+                responsible: responsible
+            });
+
+            saveData();
+            renderNotes();
+            closeModal("modal-add-note");
+        }
+
+        function deleteNote(noteId) {
+            notes = notes.filter(n => n.id !== noteId);
+            saveData();
+            renderNotes();
+        }
+
+        function resetAll() {
+            if (confirm("Tem certeza que deseja redefinir o checklist para o estado inicial? Todas as marcações serão resetadas.")) {
+                categories = JSON.parse(JSON.stringify(initialData));
+                notes = JSON.parse(JSON.stringify(initialNotes));
+                saveData();
+                renderChecklist();
+                renderNotes();
+            }
+        }
+
+        // Executa ao carregar a página
+        window.onload = init;
+    </script>
+</body>
+</html>
